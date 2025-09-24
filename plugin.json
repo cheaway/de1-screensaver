@@ -1,0 +1,17 @@
+{
+  "id": "coffee_screensaver",
+  "name": "Unsplash Coffee Screensaver",
+  "type": "screensaver",
+  "version": "1.1.0",
+  "min_app_version": "1.45.0",
+  "main": "coffee_screensaver.tcl",
+  "entry_points": {
+    "init": "::plugins::coffee_screensaver::init",
+    "start": "::plugins::coffee_screensaver::start",
+    "stop": "::plugins::coffee_screensaver::stop",
+    "show": "::plugins::coffee_screensaver::show",
+    "hide": "::plugins::coffee_screensaver::hide",
+    "preload": "::plugins::coffee_screensaver::preload"
+  },
+  "description": "Displays random coffee imagery from Unsplash as the machine screensaver."
+}
