@@ -5,7 +5,7 @@ This plugin pulls random Unsplash photography and shows it full-screen as the De
 ## Setup
 
 1. Create an Unsplash developer application and copy the Access Key.
-2. Copy this plugin folder into the DE1 `plugins` directory and enable it from the plugin manager.
+2. Copy this plugin folder into the DE1 `plugins` directory; the bundled `plugin.tcl` shim makes the app register it automatically on the next launch.
 3. Open the plugin's settings page (requires the DGUI plugin) and enter your access key, preferred search term, and refresh interval. Tap **Done** to save.
 4. Optionally set the environment variable `UNSPLASH_ACCESS_KEY` before launching the DE1 app. The plugin uses the UI-supplied key first and falls back to the environment variable when left blank.
 5. Wire the `start`/`stop` handlers in `plugin.json` into your screensaver lifecycle if your DE1 build requires manual registration.
