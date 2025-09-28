@@ -1,14 +1,14 @@
 # Unsplash Coffee Screensaver
 
-This plugin pulls random Unsplash photography and shows it full-screen as the Decent DE1 screensaver. The Unsplash access key, search term, and refresh cadence are all configurable from the plugin settings page.
+This plugin pulls random Unsplash photography and points the built-in DE1 screensaver at those downloads. The Unsplash access key, search term, and refresh cadence are configurable from the plugin's native settings page.
 
 ## Setup
 
 1. Create an Unsplash developer application and copy the Access Key.
 2. Copy this plugin folder into the DE1 `plugins` directory; the bundled `plugin.tcl` shim makes the app register it automatically on the next launch.
-3. Open the plugin's settings page (requires the DGUI plugin) and enter your access key, preferred search term, and refresh interval. Tap **Done** to save.
-4. Optionally set the environment variable `UNSPLASH_ACCESS_KEY` before launching the DE1 app. The plugin uses the UI-supplied key first and falls back to the environment variable when left blank.
-5. Wire the `start`/`stop` handlers in `plugin.json` into your screensaver lifecycle if your DE1 build requires manual registration.
+3. Restart the DE1 tablet app, open **Settings → Advanced → Extensions**, and enable **Unsplash Coffee Screensaver**.
+4. Tap the plugin's **Configure** button, enter your access key, preferred search term, and refresh interval, then tap **Done** (or **Apply**) to save.
+5. Optionally set the environment variable `UNSPLASH_ACCESS_KEY` before launching the DE1 app. The plugin uses the UI-supplied key first and falls back to the environment variable when left blank.
 
 ### Deploying from GitHub
 
@@ -24,16 +24,16 @@ This plugin pulls random Unsplash photography and shows it full-screen as the De
 
 ## Runtime behaviour
 
-- Downloaded images are cached under `cache/` inside the plugin directory.
-- Each interval the plugin requests `orientation=landscape` images tagged with the configured search term.
-- Photographer attribution (name + Unsplash link) is rendered across the bottom edge. Any pointer or key input exits the screensaver and stops the refresh loop until the screensaver is invoked again.
+- Downloaded images are cached under `cache/2560x1600/` inside the plugin directory. The DE1 app rescales them for the current screen resolution the first time they are used.
+- The plugin refreshes the cache on the configured interval and resets the built-in `saver` image list so the next screensaver cycle picks up the newest photo.
+- A short status line on the configuration page shows the last successful download (timestamp, photographer, and Unsplash link).
 
 ## Troubleshooting
 
 - Ensure Tcl packages `http`, `tls`, and `json` are installed in the DE1 runtime. Without TLS, HTTPS downloads will fail.
-- If no image appears, double-check that the access key is valid and that the device has network access. Errors are logged to the Tcl console (stderr).
-- When DGUI is unavailable the settings UI is skipped; you can still supply configuration via the environment variable or by editing `settings.tcl` after the plugin runs once.
+- If no image appears, double-check that the access key is valid and that the device has network access. Status and error messages are shown at the bottom of the configuration page and logged to stderr.
+- You can edit the fallback `settings.tcl` manually if you prefer not to use the UI or if you need to pre-seed values before the first launch.
 
 ## Notes
 
-Plugin wiring can vary between DE1 releases. Adjust the entry points in `plugin.json` to match your firmware's expectations if necessary. The Tcl code is self-contained and can be adapted to other DE1 contexts that want a rotating image background.
+Plugin wiring can vary between DE1 releases, but the supplied `plugin.tcl` and `main` entry point follow the layout used in current firmware. The Tcl code is self-contained and can be adapted to other DE1 contexts that want a rotating image background.
