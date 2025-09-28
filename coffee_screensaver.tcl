@@ -13,6 +13,8 @@ namespace eval ::plugins::coffee_screensaver {
     variable version "1.2.0"
     variable description "Downloads coffee-themed Unsplash photos and uses them as the idle screen saver."
     variable name "Unsplash Coffee Screensaver"
+    variable canonical_name "coffee_screensaver"
+    variable actual_plugin_id [file tail [file normalize [file dirname [info script]]]]
 
     # Core paths and runtime state.
     variable base_dir [file normalize [file dirname [info script]]]
@@ -394,6 +396,41 @@ proc ::plugins::coffee_screensaver::fetch_now {} {
     ::plugins::coffee_screensaver::update_saver_display [::plugins::coffee_screensaver::tr "Fetching new image..."]
 }
 
+proc ::plugins::coffee_screensaver::establish_alias {plugin_id} {
+    variable canonical_name
+
+    if {$plugin_id eq "" || $plugin_id eq $canonical_name} {
+        return
+    }
+
+    set source_namespace ::plugins::coffee_screensaver
+    set target_namespace ::plugins::${plugin_id}
+
+    if {![namespace exists $target_namespace]} {
+        namespace eval $target_namespace {}
+    }
+
+    foreach var {author contact version description name base_dir image_root hi_res_dir refresh_timer refresh_interval_ms running settings_loaded http_registered last_downloaded canonical_name actual_plugin_id} {
+        namespace eval $target_namespace [list namespace upvar $source_namespace $var $var]
+    }
+
+    foreach var {plugin_peeked plugin_loaded} {
+        namespace eval $target_namespace [list namespace upvar $source_namespace $var $var]
+    }
+
+    namespace eval $target_namespace [list namespace upvar $source_namespace settings settings]
+
+    foreach proc_name [info procs ${source_namespace}::*] {
+        set short_name [namespace tail $proc_name]
+        if {$short_name eq "establish_alias"} {
+            continue
+        }
+        if {[namespace which ${target_namespace}::$short_name] eq ""} {
+            interp alias {} ${target_namespace}::$short_name {} $proc_name
+        }
+    }
+}
+
 proc ::plugins::coffee_screensaver::build_ui {} {
     ::plugins::coffee_screensaver::ensure_settings_loaded
 
@@ -519,3 +556,5 @@ proc ::plugins::coffee_screensaver::start {} {
 proc ::plugins::coffee_screensaver::stop {} {
     ::plugins::coffee_screensaver::stop_refresh_loop
 }
+
+::plugins::coffee_screensaver::establish_alias $::plugins::coffee_screensaver::actual_plugin_id
