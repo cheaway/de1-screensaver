@@ -4,7 +4,11 @@
 # that can be configured alongside the Unsplash search term and access key.
 
 namespace eval ::plugins::coffee_screensaver {
-    variable version "1.1.0"
+    variable version "1.0.0"
+    variable author "Che Schneider"
+    variable contact "che.schneider@gmail.com"
+    variable name "Dynamic Coffee Screensaver"
+    variable description "Displays random coffee photos from a configurable URL as the idle screensaver."
     variable base_dir ""
     variable cache_dir ""
     variable refresh_timer ""
@@ -22,6 +26,17 @@ namespace eval ::plugins::coffee_screensaver {
         refresh_minutes 5.0
     }
 }
+
+proc ::plugins::coffee_screensaver::main {} {
+    set plugin_dir "[plugin_directory]/coffee_screensaver"
+    ::plugins::coffee_screensaver::init $plugin_dir
+    return 1
+}
+
+proc ::plugins::coffee_screensaver::unload {} {
+    ::plugins::coffee_screensaver::stop
+}
+
 
 proc ::plugins::coffee_screensaver::tr {text} {
     if {[info commands translate] ne ""} {
