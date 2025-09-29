@@ -21,17 +21,19 @@ This plugin pulls random Unsplash photography and points the built-in DE1 screen
 - **Unsplash access key** – stored with the plugin settings. Leave empty to read `UNSPLASH_ACCESS_KEY` from the environment instead.
 - **Search term** – defaults to `coffee`. Any valid Unsplash query works.
 - **Refresh interval (minutes)** – defaults to 5 minutes. Values below 0.5 minutes are coerced to 0.5.
+- **Max cached images** – defaults to 20. The plugin keeps only this many photos on disk, always replacing the oldest when new shots arrive.
 
 ## Runtime behaviour
 
 - Downloaded images are cached under `cache/2560x1600/` inside the plugin directory. The DE1 app rescales them for the current screen resolution the first time they are used.
-- The plugin refreshes the cache on the configured interval and resets the built-in `saver` image list so the next screensaver cycle picks up the newest photo.
+- The plugin enforces the configured cache limit like a ring buffer: it prunes the oldest photo before saving a new one and resets the built-in `saver` image list so the next screensaver cycle picks up fresh content.
 - A short status line on the configuration page shows the last successful download (timestamp, photographer, and Unsplash link).
 
 ## Troubleshooting
 
 - Ensure Tcl packages `http`, `tls`, and `json` are installed in the DE1 runtime. Without TLS, HTTPS downloads will fail.
 - If no image appears, double-check that the access key is valid and that the device has network access. Status and error messages are shown at the bottom of the configuration page and logged to stderr.
+- The Unsplash API now requires SNI-capable TLS (Tcl `tls` 1.7 or newer). If the status line reports `bad option "-servername"` or `software caused connection abort`, update the tablet image to a build that bundles the newer TLS library.
 - You can edit the fallback `settings.tcl` manually if you prefer not to use the UI or if you need to pre-seed values before the first launch.
 
 ## Notes
