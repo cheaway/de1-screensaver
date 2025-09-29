@@ -1,14 +1,19 @@
 # Unsplash Coffee Screensaver
 
-This plugin pulls random Unsplash photography and points the built-in DE1 screensaver at those downloads. The Unsplash access key, search term, and refresh cadence are configurable from the plugin's native settings page.
+This plugin displays beautiful random images from Unsplash as your DE1 XXL espresso machine's screensaver. The Unsplash access key, search term, and refresh cadence are all configurable from the plugin's intuitive settings page.
 
 ## Setup
 
-1. Create an Unsplash developer application and copy the Access Key.
-2. Copy this plugin folder into the DE1 `plugins` directory; the bundled `plugin.tcl` shim makes the app register it automatically on the next launch.
-3. Restart the DE1 tablet app, open **Settings → Advanced → Extensions**, and enable **Unsplash Coffee Screensaver**.
-4. Tap the plugin's **Configure** button, enter your access key, preferred search term, and refresh interval, then tap **Done** (or **Apply**) to save.
-5. Optionally set the environment variable `UNSPLASH_ACCESS_KEY` before launching the DE1 app. The plugin uses the UI-supplied key first and falls back to the environment variable when left blank.
+1. Copy this plugin folder into the DE1 `plugins` directory; the bundled `plugin.tcl` shim makes the app register it automatically on the next launch.
+2. Restart the DE1 tablet app, open **Settings → Advanced → Extensions**, and enable **Unsplash Coffee Screensaver**.
+3. Tap the plugin's **Configure** button to access the settings page.
+4. The plugin comes pre-configured with a default API key, but you can optionally:
+   - Enter your own Unsplash API key (create a free account at https://unsplash.com/developers)
+   - Customize the search term (default: "coffee")
+   - Adjust the refresh interval (default: 5 minutes)
+   - Set the maximum number of cached images (default: 20)
+5. Tap **Apply** to save settings or **Fetch Now** to immediately download a new image.
+6. Advanced: Set the environment variable `UNSPLASH_ACCESS_KEY` before launching the DE1 app to use a different default key.
 
 ### Deploying from GitHub
 
@@ -31,10 +36,35 @@ This plugin pulls random Unsplash photography and points the built-in DE1 screen
 
 ## Troubleshooting
 
-- Ensure Tcl packages `http`, `tls`, and `json` are installed in the DE1 runtime. Without TLS, HTTPS downloads will fail.
-- If no image appears, double-check that the access key is valid and that the device has network access. Status and error messages are shown at the bottom of the configuration page and logged to stderr.
-- The Unsplash API now requires SNI-capable TLS (Tcl `tls` 1.7 or newer). If the status line reports `bad option "-servername"` or `software caused connection abort`, update the tablet image to a build that bundles the newer TLS library.
-- You can edit the fallback `settings.tcl` manually if you prefer not to use the UI or if you need to pre-seed values before the first launch.
+### Requirements
+- **Tcl packages**: `http`, `tls` (1.7+ recommended), and `json` must be installed
+- **TLS version**: Unsplash API requires TLS 1.2+ with SNI (Server Name Indication) support
+- **Internet connection**: Active network connection required for downloading images
+- **Unsplash API key**: Obtain a free API key from https://unsplash.com/developers
+
+### Common Issues
+
+#### No images appear
+1. **Check API key**: Ensure you've entered a valid Unsplash API key in the settings page
+2. **Verify network**: Confirm the tablet has internet access
+3. **Check logs**: Status messages appear at the bottom of the configuration page
+4. **Test manually**: Press the "Fetch Now" button to trigger an immediate download
+
+#### TLS/SSL errors ("software caused connection abort", "protocol version")
+- The Unsplash API requires modern TLS with SNI support (TLS 1.7+)
+- If you see connection errors, your Tcl/TLS version may be too old
+- The DE1 tablet should have a compatible version; this typically only affects local development
+- Error messages are logged and displayed on the settings page for debugging
+
+#### Images download but don't display
+- Check that the cache directory exists: `[plugin-dir]/cache/2560x1600/`
+- Verify images are actually downloaded (check the cache directory)
+- The DE1 app may need to be restarted to recognize the new screensaver directory
+
+#### Settings not saved
+- Settings are automatically saved when you press "Apply" or "Done"
+- Settings are stored in `settings.tcl` as a fallback
+- You can manually edit `settings.tcl` if needed
 
 ## Notes
 
